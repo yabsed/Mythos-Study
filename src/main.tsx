@@ -11,7 +11,12 @@ import {
   Server,
   ShieldCheck,
 } from "lucide-react";
+import hljs from "highlight.js/lib/core";
+import javascript from "highlight.js/lib/languages/javascript";
+import "highlight.js/styles/grayscale.css";
 import "./styles.css";
+
+hljs.registerLanguage("javascript", javascript);
 
 type StoryId = "small" | "overflow" | "patched" | "closed";
 
@@ -32,6 +37,7 @@ const initialState: LabState = {
 };
 
 const sceneOrder: StoryId[] = ["small", "overflow", "patched", "closed"];
+type CodeTone = "neutral" | "safe" | "danger" | "missing" | "muted";
 
 const scenes: Record<
   StoryId,
@@ -322,25 +328,25 @@ function CodeLens({
   state: LabState;
   story: ReturnType<typeof getStory>;
 }) {
-  const rows = [
+  const rows: { line: string; tone: CodeTone }[] = [
     {
-      line: "if !rpcsec_gss_reachable: return",
+      line: "if (!rpcsecGssReachable) return;",
       tone: state.doorOpen ? "neutral" : "safe",
     },
     {
-      line: `box = stack_buffer(${BUFFER_BYTES})  // 4 blocks`,
+      line: `const box = stackBuffer(${BUFFER_BYTES}); // 4 blocks`,
       tone: state.doorOpen ? "neutral" : "muted",
     },
     {
-      line: `incoming = request_part(${state.packetBytes})  // ${story.packetBlocks} blocks`,
+      line: `const incoming = requestPart(${state.packetBytes}); // ${story.packetBlocks} blocks`,
       tone: state.doorOpen ? "neutral" : "muted",
     },
     {
-      line: "if incoming > box.size: stop",
+      line: "if (incoming > box.size) return;",
       tone: !state.doorOpen ? "muted" : state.patched ? "safe" : "missing",
     },
     {
-      line: "copy(box, incoming)",
+      line: "copy(box, incoming);",
       tone: !state.doorOpen ? "muted" : story.overflowing ? "danger" : "safe",
     },
   ];
@@ -354,12 +360,23 @@ function CodeLens({
       <div className="pseudo-code">
         {rows.map((row, index) => (
           <div className={`code-row tone-${row.tone}`} key={row.line}>
-            <span>{index + 1}</span>
-            <code>{row.line}</code>
+            <span className="code-line-number">{index + 1}</span>
+            <HighlightedCode line={row.line} />
           </div>
         ))}
       </div>
     </section>
+  );
+}
+
+function HighlightedCode({ line }: { line: string }) {
+  const highlighted = hljs.highlight(line, { language: "javascript" }).value;
+
+  return (
+    <code
+      className="hljs"
+      dangerouslySetInnerHTML={{ __html: highlighted }}
+    />
   );
 }
 

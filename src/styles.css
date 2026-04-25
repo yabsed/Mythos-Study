@@ -17,10 +17,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    linear-gradient(120deg, rgba(214, 65, 45, 0.1), transparent 30rem),
-    linear-gradient(240deg, rgba(11, 138, 124, 0.12), transparent 28rem),
-    #f6f7f4;
+  background: #f2f2f2;
 }
 
 button {
@@ -99,30 +96,31 @@ h1 {
 
 .pseudo-code {
   overflow-x: auto;
-  border: 1px solid rgba(29, 32, 40, 0.1);
+  border: 1px solid #111111;
   border-radius: 8px;
-  background: #151820;
+  background: #ffffff;
 }
 
 .code-row {
   display: grid;
-  grid-template-columns: 44px minmax(360px, 1fr);
+  grid-template-columns: 44px minmax(0, 1fr);
   align-items: center;
-  min-height: 34px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  color: #d7dde7;
+  min-height: 36px;
+  border-bottom: 1px solid #e2e2e2;
+  color: #111111;
 }
 
 .code-row:last-child {
   border-bottom: 0;
 }
 
-.code-row span {
+.code-line-number {
   display: grid;
   place-items: center;
   height: 100%;
-  color: #7f8794;
-  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid #dddddd;
+  background: #f4f4f4;
+  color: #737373;
   font-size: 0.82rem;
 }
 
@@ -130,25 +128,43 @@ h1 {
   padding: 0 14px;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 0.84rem;
+  white-space: pre;
+}
+
+.code-row code.hljs {
+  display: block;
+  min-width: max-content;
+  background: transparent;
 }
 
 .code-row.tone-safe {
-  background: rgba(20, 139, 111, 0.18);
+  background: #f1f1f1;
 }
 
 .code-row.tone-danger {
-  background: rgba(214, 65, 45, 0.28);
-  color: #fff3ef;
+  background: #e8e8e8;
+  box-shadow: inset 4px 0 #111111;
 }
 
 .code-row.tone-missing {
-  color: #7f8794;
+  color: #777777;
   text-decoration: line-through;
 }
 
 .code-row.tone-muted {
-  color: #69707c;
+  color: #777777;
   opacity: 0.55;
+}
+
+.code-row .hljs,
+.code-row .hljs-string,
+.code-row .hljs-regexp,
+.code-row .hljs-symbol,
+.code-row .hljs-bullet,
+.code-row .hljs-link,
+.code-row .hljs-deletion,
+.code-row .hljs-addition {
+  background: transparent;
 }
 
 .story-card {
@@ -235,9 +251,7 @@ h1 {
   overflow: hidden;
   border: 1px solid rgba(29, 32, 40, 0.1);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg, #fbfcf9 0%, #eef4f1 100%),
-    #f7f8f5;
+  background: #f7f7f7;
 }
 
 .story-stage::before {
@@ -248,7 +262,7 @@ h1 {
   top: 27%;
   height: 9px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #3162b4, #0b8a7c, #d6412d);
+  background: #c9c9c9;
   opacity: 0.34;
 }
 
@@ -321,11 +335,7 @@ h1 {
 }
 
 .packet-fold {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(35deg, transparent 49%, rgba(49, 98, 180, 0.24) 50%, transparent 51%),
-    linear-gradient(145deg, transparent 49%, rgba(49, 98, 180, 0.2) 50%, transparent 51%);
+  display: none;
 }
 
 .packet-overflow,
