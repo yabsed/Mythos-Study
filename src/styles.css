@@ -674,6 +674,17 @@ h1 {
   padding-left: 22px;
 }
 
+.advisory-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.advisory-list li {
+  padding-left: 4px;
+}
+
 .advisory-steps li {
   padding-left: 4px;
 }
