@@ -690,6 +690,56 @@ h1 {
   min-width: 760px;
 }
 
+.function-diff code {
+  padding: 0;
+}
+
+.diff-line {
+  display: grid;
+  grid-template-columns: 28px minmax(max-content, 1fr);
+  min-height: 22px;
+}
+
+.diff-marker {
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  user-select: none;
+}
+
+.diff-text {
+  padding: 0 12px;
+  white-space: pre;
+}
+
+.diff-line.tone-add {
+  background: var(--jade-3);
+  color: var(--jade-12);
+}
+
+.diff-line.tone-delete {
+  background: var(--tomato-3);
+  color: var(--tomato-12);
+}
+
+.diff-line.tone-add .diff-marker::before {
+  content: "+";
+  color: var(--jade-11);
+  font-weight: 900;
+}
+
+.diff-line.tone-delete .diff-marker::before {
+  content: "-";
+  color: var(--tomato-11);
+  font-weight: 900;
+}
+
+.diff-line.tone-delete .diff-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .advisory-note {
   margin-top: 18px;
   color: var(--muted);

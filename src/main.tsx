@@ -151,117 +151,69 @@ const correctionCommits = [
   },
 ];
 
-const cgitPatch = `diff --git a/lib/librpcsec_gss/svc_rpcsec_gss.c b/lib/librpcsec_gss/svc_rpcsec_gss.c
-index e9d39a813f86..73b92371e6d0 100644
---- a/lib/librpcsec_gss/svc_rpcsec_gss.c
-+++ b/lib/librpcsec_gss/svc_rpcsec_gss.c
-@@ -758,6 +758,14 @@ svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg,
+type FunctionDiffLine = {
+  text: string;
+  tone?: "add" | "delete";
+};
 
- 	memset(rpchdr, 0, sizeof(rpchdr));
-
-+	oa = &msg->rm_call.cb_cred;
-+
-+	if (oa->oa_length > sizeof(rpchdr) - 8 * BYTES_PER_XDR_UNIT) {
-+		log_debug("auth length %d exceeds maximum", oa->oa_length);
-+		client->cl_state = CLIENT_STALE;
-+		return (FALSE);
-+	}
-+
- 	/* Reconstruct RPC header for signing (from xdr_callmsg). */
- 	buf = rpchdr;
- 	IXDR_PUT_LONG(buf, msg->rm_xid);
-@@ -766,7 +774,6 @@ svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg,
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_prog);
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_vers);
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_proc);
--	oa = &msg->rm_call.cb_cred;
- 	IXDR_PUT_ENUM(buf, oa->oa_flavor);
- 	IXDR_PUT_LONG(buf, oa->oa_length);
- 	if (oa->oa_length) {
-diff --git a/sys/rpc/rpcsec_gss/svc_rpcsec_gss.c b/sys/rpc/rpcsec_gss/svc_rpcsec_gss.c
-index 35c904560836..528112d5642a 100644
---- a/sys/rpc/rpcsec_gss/svc_rpcsec_gss.c
-+++ b/sys/rpc/rpcsec_gss/svc_rpcsec_gss.c
-@@ -1170,6 +1170,15 @@ svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg,
-
- 	memset(rpchdr, 0, sizeof(rpchdr));
-
-+	oa = &msg->rm_call.cb_cred;
-+
-+	if (oa->oa_length > sizeof(rpchdr) - 8 * BYTES_PER_XDR_UNIT) {
-+		rpc_gss_log_debug("auth length %d exceeds maximum",
-+		    oa->oa_length);
-+		client->cl_state = CLIENT_STALE;
-+		return (FALSE);
-+	}
-+
- 	/* Reconstruct RPC header for signing (from xdr_callmsg). */
- 	buf = rpchdr;
- 	IXDR_PUT_LONG(buf, msg->rm_xid);
-@@ -1178,7 +1187,6 @@ svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg,
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_prog);
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_vers);
- 	IXDR_PUT_LONG(buf, msg->rm_call.cb_proc);
--	oa = &msg->rm_call.cb_cred;
- 	IXDR_PUT_ENUM(buf, oa->oa_flavor);
- 	IXDR_PUT_LONG(buf, oa->oa_length);
- 	if (oa->oa_length) {`;
-
-const validatedFunctionSource = `static bool_t
-svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg,
-	gss_qop_t *qop)
-{
-	struct opaque_auth	*oa;
-	gss_buffer_desc		 rpcbuf, checksum;
-	OM_uint32		 maj_stat, min_stat;
-	gss_qop_t		 qop_state;
-	int32_t			 rpchdr[128 / sizeof(int32_t)];
-	int32_t			*buf;
-
-	log_debug("in svc_rpc_gss_validate()");
-
-	memset(rpchdr, 0, sizeof(rpchdr));
-
-	oa = &msg->rm_call.cb_cred;
-
-	if (oa->oa_length > sizeof(rpchdr) - 8 * BYTES_PER_XDR_UNIT) {
-		log_debug("auth length %d exceeds maximum", oa->oa_length);
-		client->cl_state = CLIENT_STALE;
-		return (FALSE);
-	}
-
-	/* Reconstruct RPC header for signing (from xdr_callmsg). */
-	buf = rpchdr;
-	IXDR_PUT_LONG(buf, msg->rm_xid);
-	IXDR_PUT_ENUM(buf, msg->rm_direction);
-	IXDR_PUT_LONG(buf, msg->rm_call.cb_rpcvers);
-	IXDR_PUT_LONG(buf, msg->rm_call.cb_prog);
-	IXDR_PUT_LONG(buf, msg->rm_call.cb_vers);
-	IXDR_PUT_LONG(buf, msg->rm_call.cb_proc);
-	IXDR_PUT_ENUM(buf, oa->oa_flavor);
-	IXDR_PUT_LONG(buf, oa->oa_length);
-	if (oa->oa_length) {
-		memcpy((caddr_t)buf, oa->oa_base, oa->oa_length);
-		buf += RNDUP(oa->oa_length) / sizeof(int32_t);
-	}
-	rpcbuf.value = rpchdr;
-	rpcbuf.length = (u_char *)buf - (u_char *)rpchdr;
-
-	checksum.value = msg->rm_call.cb_verf.oa_base;
-	checksum.length = msg->rm_call.cb_verf.oa_length;
-
-	maj_stat = gss_verify_mic(&min_stat, client->cl_ctx, &rpcbuf, &checksum,
-				  &qop_state);
-
-	if (maj_stat != GSS_S_COMPLETE) {
-		log_status("gss_verify_mic", client->cl_mech,
-		    maj_stat, min_stat);
-		client->cl_state = CLIENT_STALE;
-		return (FALSE);
-	}
-	*qop = qop_state;
-	return (TRUE);
-}`;
+const functionDiffLines: FunctionDiffLine[] = [
+  { text: "static bool_t" },
+  { text: "svc_rpc_gss_validate(struct svc_rpc_gss_client *client, struct rpc_msg *msg," },
+  { text: "\tgss_qop_t *qop)" },
+  { text: "{" },
+  { text: "\tstruct opaque_auth\t*oa;" },
+  { text: "\tgss_buffer_desc\t\t rpcbuf, checksum;" },
+  { text: "\tOM_uint32\t\t maj_stat, min_stat;" },
+  { text: "\tgss_qop_t\t\t qop_state;" },
+  { text: "\tint32_t\t\t\t rpchdr[128 / sizeof(int32_t)];" },
+  { text: "\tint32_t\t\t\t*buf;" },
+  { text: "" },
+  { text: "\tlog_debug(\"in svc_rpc_gss_validate()\");" },
+  { text: "" },
+  { text: "\tmemset(rpchdr, 0, sizeof(rpchdr));" },
+  { text: "" },
+  { text: "\toa = &msg->rm_call.cb_cred;", tone: "add" },
+  { text: "", tone: "add" },
+  { text: "\tif (oa->oa_length > sizeof(rpchdr) - 8 * BYTES_PER_XDR_UNIT) {", tone: "add" },
+  { text: "\t\tlog_debug(\"auth length %d exceeds maximum\", oa->oa_length);", tone: "add" },
+  { text: "\t\tclient->cl_state = CLIENT_STALE;", tone: "add" },
+  { text: "\t\treturn (FALSE);", tone: "add" },
+  { text: "\t}", tone: "add" },
+  { text: "" },
+  { text: "\t/* Reconstruct RPC header for signing (from xdr_callmsg). */" },
+  { text: "\tbuf = rpchdr;" },
+  { text: "\tIXDR_PUT_LONG(buf, msg->rm_xid);" },
+  { text: "\tIXDR_PUT_ENUM(buf, msg->rm_direction);" },
+  { text: "\tIXDR_PUT_LONG(buf, msg->rm_call.cb_rpcvers);" },
+  { text: "\tIXDR_PUT_LONG(buf, msg->rm_call.cb_prog);" },
+  { text: "\tIXDR_PUT_LONG(buf, msg->rm_call.cb_vers);" },
+  { text: "\tIXDR_PUT_LONG(buf, msg->rm_call.cb_proc);" },
+  { text: "\toa = &msg->rm_call.cb_cred;", tone: "delete" },
+  { text: "\tIXDR_PUT_ENUM(buf, oa->oa_flavor);" },
+  { text: "\tIXDR_PUT_LONG(buf, oa->oa_length);" },
+  { text: "\tif (oa->oa_length) {" },
+  { text: "\t\tmemcpy((caddr_t)buf, oa->oa_base, oa->oa_length);" },
+  { text: "\t\tbuf += RNDUP(oa->oa_length) / sizeof(int32_t);" },
+  { text: "\t}" },
+  { text: "\trpcbuf.value = rpchdr;" },
+  { text: "\trpcbuf.length = (u_char *)buf - (u_char *)rpchdr;" },
+  { text: "" },
+  { text: "\tchecksum.value = msg->rm_call.cb_verf.oa_base;" },
+  { text: "\tchecksum.length = msg->rm_call.cb_verf.oa_length;" },
+  { text: "" },
+  { text: "\tmaj_stat = gss_verify_mic(&min_stat, client->cl_ctx, &rpcbuf, &checksum," },
+  { text: "\t\t\t\t  &qop_state);" },
+  { text: "" },
+  { text: "\tif (maj_stat != GSS_S_COMPLETE) {" },
+  { text: "\t\tlog_status(\"gss_verify_mic\", client->cl_mech," },
+  { text: "\t\t    maj_stat, min_stat);" },
+  { text: "\t\tclient->cl_state = CLIENT_STALE;" },
+  { text: "\t\treturn (FALSE);" },
+  { text: "\t}" },
+  { text: "\t*qop = qop_state;" },
+  { text: "\treturn (TRUE);" },
+  { text: "}" },
+];
 
 function getStory(state: LabState) {
   const overflowBytes = Math.max(0, state.packetBytes - BUFFER_BYTES);
@@ -321,9 +273,9 @@ function App() {
         playScene={playScene}
       />
 
-      <PatchReference />
-
       <AdvisoryTranslation />
+
+      <PatchReference />
     </main>
   );
 }
@@ -511,90 +463,21 @@ function PatchReference() {
   return (
     <article className="patch-reference">
       <header className="patch-header">
-        <p className="advisory-kicker">cgit src commit</p>
-        <h2>수정 커밋과 코드 변경</h2>
+        <p className="advisory-kicker">librpcsec_gss</p>
+        <h2>함수 원문</h2>
       </header>
 
       <section className="patch-section">
-        <h3>커밋 정보</h3>
-        <dl className="patch-meta">
-          <div>
-            <dt>커밋</dt>
-            <dd><code>1b00fdc1f3cd1311e4b52be253e0fecbca35941d</code></dd>
-          </div>
-          <div>
-            <dt>작성자</dt>
-            <dd>Mark Johnston &lt;markj@FreeBSD.org&gt;</dd>
-          </div>
-          <div>
-            <dt>커미터</dt>
-            <dd>Gordon Tetlow &lt;gordon@FreeBSD.org&gt;</dd>
-          </div>
-          <div>
-            <dt>커밋 시각</dt>
-            <dd>2026-03-26 01:25:05 +0000</dd>
-          </div>
-          <div>
-            <dt>부모</dt>
-            <dd><code>1fddb5435315ca44c96960b16bdda8338afd15a1</code></dd>
-          </div>
-          <div>
-            <dt>보안</dt>
-            <dd>FreeBSD-SA-26:08.rpcsec_gss, CVE-2026-4747</dd>
-          </div>
-        </dl>
-        <p>
-          <code>svc_rpc_gss_validate()</code>가 입력 메시지를 고정 크기 스택
-          버퍼로 복사하기 전에 인증 데이터 길이를 검사하도록 바꾼 커밋입니다.
-          <code>oa_length</code>가 버퍼에 들어갈 수 있는 최대 길이를 넘으면
-          클라이언트 상태를 stale로 바꾸고 검증을 중단합니다.
-        </p>
-        <div className="source-line">
-          <a href="https://cgit.freebsd.org/src/commit/?id=1b00fdc1f3cd1311e4b52be253e0fecbca35941d" target="_blank" rel="noreferrer">
-            cgit 커밋 보기
-          </a>
-          <span>cherry-picked from <code>143293c14f8de00c6d3de88cd23fc224e7014206</code></span>
-        </div>
-      </section>
-
-      <section className="patch-section">
-        <h3>Diffstat</h3>
-        <div className="table-wrap">
-          <table className="advisory-table">
-            <thead>
-              <tr>
-                <th>파일</th>
-                <th>변경</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>lib/librpcsec_gss/svc_rpcsec_gss.c</code></td>
-                <td>9 lines</td>
-              </tr>
-              <tr>
-                <td><code>sys/rpc/rpcsec_gss/svc_rpcsec_gss.c</code></td>
-                <td>10 lines</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>전체 변경량은 2개 파일, 17줄 추가, 2줄 삭제입니다.</p>
-      </section>
-
-      <section className="patch-section">
-        <h3>패치 원문</h3>
-        <pre className="code-block"><code>{cgitPatch}</code></pre>
-      </section>
-
-      <section className="patch-section">
-        <h3>함수 원문</h3>
-        <p>
-          아래는 길이 검사가 들어간 사용자 공간
-          <code>librpcsec_gss</code> 쪽 <code>svc_rpc_gss_validate()</code>
-          함수 원문입니다.
-        </p>
-        <pre className="code-block source-code"><code>{validatedFunctionSource}</code></pre>
+        <pre className="code-block source-code function-diff">
+          <code>
+            {functionDiffLines.map((line, index) => (
+              <span className={`diff-line tone-${line.tone ?? "normal"}`} key={`${index}-${line.text}`}>
+                <span className="diff-marker" aria-hidden="true" />
+                <span className="diff-text">{line.text || " "}</span>
+              </span>
+            ))}
+          </code>
+        </pre>
       </section>
     </article>
   );
