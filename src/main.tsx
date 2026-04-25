@@ -256,10 +256,7 @@ function App() {
 
   return (
     <main className="app-shell">
-      <header className="hero">
-        <div className="eyebrow">CVE-2026-4747</div>
-        <h1>RPCSEC_GSS 오버플로우</h1>
-      </header>
+      <AdvisoryTitle />
 
       <section className="support-row">
         <CodeLens state={state} story={story} />
@@ -273,9 +270,9 @@ function App() {
         playScene={playScene}
       />
 
-      <AdvisoryTranslation />
-
       <PatchReference />
+
+      <AdvisoryTranslation />
     </main>
   );
 }
@@ -484,10 +481,9 @@ function PatchReference() {
 }
 
 
-
-function AdvisoryTranslation() {
+function AdvisoryTitle() {
   return (
-    <article className="advisory">
+    <article className="advisory advisory-title">
       <header className="advisory-header">
         <p className="advisory-kicker">FreeBSD-SA-26:08.rpcsec_gss</p>
         <h2>RPCSEC_GSS 패킷 검증을 통한 원격 코드 실행</h2>
@@ -523,7 +519,15 @@ function AdvisoryTranslation() {
           <dd>CVE-2026-4747</dd>
         </div>
       </dl>
+    </article>
+  );
+}
 
+
+
+function AdvisoryTranslation() {
+  return (
+    <article className="advisory">
       <p className="advisory-intro">
         FreeBSD 보안 권고의 각 필드, 보안 브랜치, 아래 섹션에 대한 일반 정보는{" "}
         <a href="https://security.FreeBSD.org/" target="_blank" rel="noreferrer">
