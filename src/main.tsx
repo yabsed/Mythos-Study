@@ -11,11 +11,6 @@ import {
 } from "lucide-react";
 import hljs from "highlight.js/lib/core";
 import javascript from "highlight.js/lib/languages/javascript";
-import "@radix-ui/colors/slate.css";
-import "@radix-ui/colors/blue.css";
-import "@radix-ui/colors/tomato.css";
-import "@radix-ui/colors/jade.css";
-import "highlight.js/styles/github.css";
 import "./styles.css";
 
 hljs.registerLanguage("javascript", javascript);

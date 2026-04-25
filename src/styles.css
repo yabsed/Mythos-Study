@@ -1,3 +1,9 @@
+@import "@radix-ui/colors/slate.css";
+@import "@radix-ui/colors/blue.css";
+@import "@radix-ui/colors/tomato.css";
+@import "@radix-ui/colors/jade.css";
+@import "highlight.js/styles/github.css";
+
 :root {
   --app-bg: var(--slate-2);
   --surface: var(--slate-1);
