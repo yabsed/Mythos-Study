@@ -36,6 +36,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
   background: var(--app-bg);
 }
 
@@ -47,6 +48,7 @@ button {
 a {
   color: var(--accent);
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 a:hover {
@@ -54,7 +56,8 @@ a:hover {
 }
 
 .app-shell {
-  width: min(1120px, 100%);
+  width: 100%;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 14px;
 }
@@ -84,6 +87,32 @@ h1 {
   font-size: clamp(1.7rem, 3.3vw, 3rem);
   line-height: 1.04;
   letter-spacing: 0;
+}
+
+h1,
+h2,
+h3,
+p,
+li,
+dt,
+dd,
+th,
+td,
+strong {
+  overflow-wrap: anywhere;
+}
+
+.advisory,
+.interactive-section,
+.patch-reference,
+.story-card,
+.code-lens,
+.story-stage,
+.pseudo-code,
+.patch-reference pre,
+.advisory pre {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .story-card,
@@ -207,12 +236,18 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   gap: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   color: var(--text);
   font-weight: 900;
+}
+
+.scene-tabs button span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .scene-tabs button.is-selected {
@@ -665,6 +700,7 @@ h1 {
 .advisory-table code {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
+  overflow-wrap: anywhere;
 }
 
 .advisory-steps {
@@ -888,81 +924,347 @@ h1 {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 720px) {
   .app-shell {
-    padding: 12px;
+    padding: 10px;
   }
 
   h1 {
     font-size: 2.1rem;
   }
 
+  .advisory,
+  .interactive-section,
+  .patch-reference {
+    margin-top: 12px;
+    padding: 16px 0 6px;
+  }
+
+  .code-lens,
   .story-card {
-    padding: 12px;
+    padding: 10px;
   }
 
   .scene-tabs {
-    grid-template-columns: 1fr;
+    width: 100%;
+    grid-template-columns: repeat(2, calc((100% - 8px) / 2));
+    gap: 8px;
+  }
+
+  .scene-tabs button {
+    min-height: 44px;
+    padding: 0 8px;
+    gap: 7px;
+    font-size: 0.86rem;
+    line-height: 1.15;
   }
 
   .story-stage {
-    min-height: 530px;
+    min-height: 500px;
+    margin-top: 8px;
   }
 
   .story-stage::before {
-    left: 70px;
-    right: 70px;
-    top: 124px;
+    left: 52px;
+    right: 52px;
+    top: 156px;
+    height: 7px;
   }
 
   .actor-left {
-    left: 16px;
-    top: 72px;
+    left: 12px;
+    top: 26px;
   }
 
   .actor-right {
-    right: 16px;
-    top: 72px;
+    right: 12px;
+    top: 26px;
+  }
+
+  .actor {
+    gap: 6px;
+    font-size: 0.9rem;
   }
 
   .actor-box {
-    width: 70px;
-    height: 70px;
+    width: 62px;
+    height: 62px;
   }
 
   .packet {
-    width: 74px;
-    height: 50px;
-    top: 103px;
+    width: 68px;
+    height: 46px;
+    top: 133px;
+  }
+
+  .packet strong {
+    font-size: 0.96rem;
   }
 
   .memory-area {
-    right: 22px;
-    bottom: 24px;
-    width: calc(100% - 44px);
-    height: 174px;
-    grid-template-columns: minmax(0, 1fr) 92px;
-    gap: 10px;
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+    width: auto;
+    height: 156px;
+    grid-template-columns: minmax(154px, 1fr) 76px;
+    gap: 8px;
   }
 
   .memory-box {
-    height: 174px;
+    height: 156px;
+  }
+
+  .box-label {
+    left: 10px;
+    top: 9px;
+    font-size: 0.78rem;
+  }
+
+  .empty-slots,
+  .data-blocks {
+    left: 10px;
+    right: 10px;
+    bottom: 14px;
+    gap: 6px;
+  }
+
+  .empty-slots i,
+  .data-blocks i {
+    height: 28px;
   }
 
   .danger-zone {
-    width: 92px;
-    height: 74px;
+    width: 76px;
+    height: 68px;
+  }
+
+  .danger-zone span {
+    top: -28px;
+    font-size: 0.74rem;
+  }
+
+  .overflow-data {
+    inset: 8px;
+    top: 16px;
+  }
+
+  .blocked-data {
+    right: 58%;
+    top: 54px;
+    grid-template-columns: repeat(4, 18px);
+    gap: 5px;
+  }
+
+  .blocked-data i {
+    height: 18px;
   }
 
   .result-badge {
-    bottom: 218px;
-    width: 64px;
-    height: 64px;
+    bottom: 204px;
+    width: 58px;
+    height: 58px;
+  }
+
+  .pseudo-code {
+    overflow-x: visible;
+  }
+
+  .code-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 38px;
+  }
+
+  .code-row code {
+    padding: 8px 10px;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+  }
+
+  .code-row code.hljs {
+    min-width: 0;
+    overflow-x: visible;
+  }
+
+  .code-row code * {
+    white-space: inherit;
+    overflow-wrap: anywhere;
+  }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  .advisory-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-collapse: separate;
+    background: transparent;
+    font-size: 0.86rem;
+  }
+
+  .advisory-table thead {
+    display: none;
+  }
+
+  .advisory-table tbody {
+    display: grid;
+    gap: 8px;
+  }
+
+  .advisory-table tr {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .advisory-table td {
+    display: grid;
+    grid-template-columns: minmax(86px, 36%) minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    border: 0;
+    border-top: 1px solid var(--line);
+    padding: 9px 10px;
+  }
+
+  .advisory-table td:first-child {
+    border-top: 0;
+  }
+
+  .advisory-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+  }
+
+  .patch-reference pre,
+  .advisory pre {
+    overflow-x: visible;
+  }
+
+  .patch-reference pre code,
+  .advisory pre code {
+    padding: 10px;
+    font-size: 0.76rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .source-code code {
+    min-width: 0;
+  }
+
+  .function-diff code {
+    padding: 0;
+  }
+
+  .diff-line {
+    grid-template-columns: 24px minmax(0, 1fr);
+    min-height: auto;
+  }
+
+  .diff-text {
+    padding: 2px 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   .patch-meta div,
   .advisory-meta div {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .scene-tabs {
+    gap: 6px;
+  }
+
+  .scene-tabs button {
+    min-height: 42px;
+    padding: 0 6px;
+    gap: 5px;
+    font-size: 0.8rem;
+  }
+
+  .scene-tabs button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .story-card,
+  .code-lens {
+    padding: 8px;
+  }
+
+  .story-stage {
+    min-height: 490px;
+  }
+
+  .story-stage::before {
+    left: 44px;
+    right: 44px;
+    top: 148px;
+  }
+
+  .actor-left {
+    left: 10px;
+  }
+
+  .actor-right {
+    right: 10px;
+  }
+
+  .actor-box {
+    width: 56px;
+    height: 56px;
+  }
+
+  .packet {
+    width: 64px;
+    height: 44px;
+    top: 126px;
+  }
+
+  .memory-area {
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+    width: auto;
+    height: 150px;
+    grid-template-columns: minmax(140px, 1fr) 70px;
+    gap: 6px;
+  }
+
+  .memory-box {
+    height: 150px;
+  }
+
+  .danger-zone {
+    width: 70px;
+    height: 64px;
+  }
+
+  .result-badge {
+    bottom: 190px;
+  }
+
+  .advisory-table td {
+    grid-template-columns: 1fr;
+    gap: 3px;
   }
 }

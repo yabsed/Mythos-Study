@@ -568,8 +568,8 @@ function AdvisoryTranslation() {
             <tbody>
               {correctedVersions.map((row) => (
                 <tr key={row.branch}>
-                  <td>{row.branch}</td>
-                  <td>{row.corrected}</td>
+                  <td data-label="브랜치와 버전">{row.branch}</td>
+                  <td data-label="수정 시각">{row.corrected}</td>
                 </tr>
               ))}
             </tbody>
@@ -692,9 +692,9 @@ patch < /path/to/patch`}</code></pre>
             <tbody>
               {correctionCommits.map((row) => (
                 <tr key={row.hash}>
-                  <td>{row.branch}</td>
-                  <td><code>{row.hash}</code></td>
-                  <td>{row.revision}</td>
+                  <td data-label="브랜치/경로">{row.branch}</td>
+                  <td data-label="해시"><code>{row.hash}</code></td>
+                  <td data-label="리비전">{row.revision}</td>
                 </tr>
               ))}
             </tbody>
@@ -1177,8 +1177,7 @@ frame pointer           = 0x28:0x4130624139614839`}</code></pre>
         <h3>5단계: 하드웨어 브레이크포인트 미스터리, DR7과 DDB</h3>
         <p>
           셸코드 실행, <code>kproc_create</code> 성공, <code>ps</code>에서 보이는
-          프로세스 이름까지 모두 정상처럼 보였는데도 worker가 계속
-          <strong>trap 1</strong>, 즉 debug exception으로 죽었습니다. 그것도 완전히
+          프로세스 이름까지 모두 정상처럼 보였는데도 worker가 계속 <strong>trap 1</strong>, 즉 debug exception으로 죽었습니다. 그것도 완전히
           유효한 명령어에서 크래시했습니다. 말이 되지 않는 상황이었습니다.
         </p>
         <p>
