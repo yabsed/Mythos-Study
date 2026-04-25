@@ -6,14 +6,16 @@ import {
   Code2,
   LockKeyhole,
   Network,
-  Play,
-  RotateCcw,
   Server,
   ShieldCheck,
 } from "lucide-react";
 import hljs from "highlight.js/lib/core";
 import javascript from "highlight.js/lib/languages/javascript";
-import "highlight.js/styles/grayscale.css";
+import "@radix-ui/colors/slate.css";
+import "@radix-ui/colors/blue.css";
+import "@radix-ui/colors/tomato.css";
+import "@radix-ui/colors/jade.css";
+import "highlight.js/styles/github.css";
 import "./styles.css";
 
 hljs.registerLanguage("javascript", javascript);
@@ -116,40 +118,12 @@ function App() {
   const [state, setState] = React.useState<LabState>(initialState);
   const [sceneId, setSceneId] = React.useState<StoryId>("overflow");
   const [runId, setRunId] = React.useState(1);
-  const [playingAll, setPlayingAll] = React.useState(false);
-  const timersRef = React.useRef<number[]>([]);
   const story = getStory(state);
 
-  React.useEffect(() => {
-    return () => {
-      timersRef.current.forEach((timer) => window.clearTimeout(timer));
-    };
-  }, []);
-
   const playScene = (nextScene: StoryId) => {
-    timersRef.current.forEach((timer) => window.clearTimeout(timer));
-    timersRef.current = [];
-    setPlayingAll(false);
     setSceneId(nextScene);
     setState(scenes[nextScene].state);
     setRunId((current) => current + 1);
-  };
-
-  const playAll = () => {
-    timersRef.current.forEach((timer) => window.clearTimeout(timer));
-    timersRef.current = [];
-    setPlayingAll(true);
-    sceneOrder.forEach((nextScene, index) => {
-      const timer = window.setTimeout(() => {
-        setSceneId(nextScene);
-        setState(scenes[nextScene].state);
-        setRunId((current) => current + 1);
-      }, index * 3600);
-      timersRef.current.push(timer);
-    });
-    timersRef.current.push(
-      window.setTimeout(() => setPlayingAll(false), sceneOrder.length * 3600),
-    );
   };
 
   return (
@@ -168,9 +142,7 @@ function App() {
         runId={runId}
         state={state}
         story={story}
-        playingAll={playingAll}
         playScene={playScene}
-        playAll={playAll}
       />
 
       <Explanation />
@@ -183,17 +155,13 @@ function StoryTheater({
   runId,
   state,
   story,
-  playingAll,
   playScene,
-  playAll,
 }: {
   sceneId: StoryId;
   runId: number;
   state: LabState;
   story: ReturnType<typeof getStory>;
-  playingAll: boolean;
   playScene: (nextScene: StoryId) => void;
-  playAll: () => void;
 }) {
   const visualStyle = {
     "--story-stop": story.packetStop,
@@ -214,26 +182,6 @@ function StoryTheater({
               <span>{scenes[id].label}</span>
             </button>
           ))}
-        </div>
-        <div className="story-actions">
-          <button
-            className="primary-button"
-            type="button"
-            onClick={playAll}
-            disabled={playingAll}
-          >
-            <Play size={16} />
-            {playingAll ? "재생 중" : "전체 보기"}
-          </button>
-          <button
-            className="icon-button"
-            type="button"
-            onClick={() => playScene(sceneId)}
-            aria-label="다시 보기"
-            title="다시 보기"
-          >
-            <RotateCcw size={17} />
-          </button>
         </div>
       </div>
 
