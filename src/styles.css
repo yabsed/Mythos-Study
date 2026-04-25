@@ -8,6 +8,8 @@
   --app-bg: var(--slate-2);
   --surface: var(--slate-1);
   --surface-muted: var(--slate-3);
+  --stage-bg: var(--surface);
+  --stage-track: var(--slate-4);
   --line: var(--slate-6);
   --line-strong: var(--slate-8);
   --text: var(--slate-12);
@@ -245,7 +247,7 @@ h1 {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--surface-muted);
+  background: var(--stage-bg);
 }
 
 .story-stage::before {
@@ -256,7 +258,7 @@ h1 {
   top: 27%;
   height: 9px;
   border-radius: 999px;
-  background: var(--slate-5);
+  background: var(--stage-track);
 }
 
 .actor {
