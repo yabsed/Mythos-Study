@@ -1,5 +1,4 @@
 @import "@radix-ui/colors/slate.css";
-@import "@radix-ui/colors/blue.css";
 @import "@radix-ui/colors/tomato.css";
 @import "@radix-ui/colors/jade.css";
 @import "highlight.js/styles/github.css";
@@ -12,8 +11,8 @@
   --line-strong: var(--slate-8);
   --text: var(--slate-12);
   --muted: var(--slate-11);
-  --accent: var(--blue-9);
-  --accent-soft: var(--blue-3);
+  --accent: var(--tomato-9);
+  --accent-soft: var(--tomato-3);
   --safe: var(--jade-9);
   --safe-soft: var(--jade-3);
   --danger: var(--tomato-9);
@@ -254,7 +253,7 @@ strong {
 .scene-tabs button.is-selected {
   border-color: var(--accent);
   background: var(--accent-soft);
-  color: var(--blue-11);
+  color: var(--tomato-11);
 }
 
 .story-overflow .scene-tabs button.is-selected {
@@ -558,44 +557,39 @@ strong {
 }
 
 .back-link {
-  min-height: 42px;
+  min-height: 32px;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 5px 14px 5px 6px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
+  gap: 8px;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
   font-weight: 900;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
     color 160ms ease,
     transform 160ms ease;
 }
 
 .back-link svg {
-  width: 30px;
-  height: 30px;
-  padding: 7px;
-  border-radius: 50%;
-  background: var(--accent-soft);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--accent);
   flex: 0 0 auto;
 }
 
 .back-link:hover {
-  border-color: var(--accent);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
   color: var(--accent);
   text-decoration: none;
-  transform: translateX(-2px);
+  transform: translateX(-1px);
 }
 
 .back-link:focus-visible {
-  outline: 3px solid var(--blue-5);
+  outline: 3px solid var(--tomato-5);
   outline-offset: 3px;
 }
 
