@@ -730,6 +730,7 @@ h1 {
   place-items: center;
   border-right: 1px solid var(--line);
   color: var(--muted);
+  -webkit-user-select: none;
   user-select: none;
 }
 

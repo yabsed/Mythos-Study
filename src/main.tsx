@@ -473,7 +473,7 @@ function PatchReference() {
 
       <section className="patch-section">
         <div className="source-line">
-          <a href="https://cgit.freebsd.org/src/commit/?id=1b00fdc1f3cd1311e4b52be253e0fecbca35941d" target="_blank" rel="noreferrer">
+          <a href="https://cgit.freebsd.org/src/commit/?id=1b00fdc1f3cd1311e4b52be253e0fecbca35941d" target="_blank" rel="noopener noreferrer">
             cgit 커밋 원문
           </a>
         </div>
@@ -547,7 +547,7 @@ function AdvisoryTranslation() {
 
       <p className="advisory-intro">
         FreeBSD 보안 권고의 각 필드, 보안 브랜치, 아래 섹션에 대한 일반 정보는{" "}
-        <a href="https://security.FreeBSD.org/" target="_blank" rel="noreferrer">
+        <a href="https://security.FreeBSD.org/" target="_blank" rel="noopener noreferrer">
           security.FreeBSD.org
         </a>
         에서 확인할 수 있습니다.
@@ -704,7 +704,7 @@ patch < /path/to/patch`}</code></pre>
           또는 다음 URL에서 NNNNNN을 해시로 바꿔 확인할 수 있습니다.
         </p>
         <p>
-          <a href="https://cgit.freebsd.org/src/commit/?id=NNNNNN" target="_blank" rel="noreferrer">
+          <a href="https://cgit.freebsd.org/src/commit/?id=NNNNNN" target="_blank" rel="noopener noreferrer">
             https://cgit.freebsd.org/src/commit/?id=NNNNNN
           </a>
         </p>
@@ -718,10 +718,10 @@ patch < /path/to/patch`}</code></pre>
       <section className="advisory-section">
         <h3>VII. 참고 자료</h3>
         <div className="source-line">
-          <a href="https://www.cve.org/CVERecord?id=CVE-2026-4747" target="_blank" rel="noreferrer">
+          <a href="https://www.cve.org/CVERecord?id=CVE-2026-4747" target="_blank" rel="noopener noreferrer">
             CVE-2026-4747
           </a>
-          <a href="https://security.FreeBSD.org/advisories/FreeBSD-SA-26:08.rpcsec_gss.asc" target="_blank" rel="noreferrer">
+          <a href="https://security.FreeBSD.org/advisories/FreeBSD-SA-26:08.rpcsec_gss.asc" target="_blank" rel="noopener noreferrer">
             FreeBSD-SA-26:08.rpcsec_gss 최신 권고문
           </a>
         </div>
