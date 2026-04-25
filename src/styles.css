@@ -146,6 +146,11 @@ h1 {
   text-decoration: line-through;
 }
 
+.code-row.tone-muted {
+  color: #69707c;
+  opacity: 0.55;
+}
+
 .story-card {
   margin-top: 12px;
   padding: 12px;
@@ -298,13 +303,13 @@ h1 {
   left: 34%;
   top: 16%;
   width: 112px;
-  height: 92px;
+  height: 66px;
   transform: translateX(-50%);
 }
 
 .gate-frame {
   position: absolute;
-  inset: 0 0 26px;
+  inset: 0;
   border: 3px solid rgba(11, 138, 124, 0.6);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.82);
@@ -372,28 +377,6 @@ h1 {
 
 .gate.is-closed .gate-frame {
   border-color: rgba(214, 65, 45, 0.72);
-}
-
-.gate span {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  min-width: 78px;
-  padding: 5px 10px;
-  transform: translateX(-50%);
-  border-radius: 8px;
-  background: #e7f4ef;
-  color: #0b6f68;
-  box-shadow: 0 8px 14px rgba(29, 32, 40, 0.1);
-  font-size: 0.76rem;
-  font-weight: 1000;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.gate.is-closed span {
-  background: #ffe6df;
-  color: #9f2f24;
 }
 
 .packet {

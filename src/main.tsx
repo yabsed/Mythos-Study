@@ -245,7 +245,6 @@ function StoryTheater({
             <div className="gate-leaf gate-right" />
             <div className="gate-bar" />
           </div>
-          <span>{state.doorOpen ? "통과 가능" : "차단"}</span>
         </div>
 
         <div className={`packet packet-${story.tone}`}>
@@ -333,20 +332,24 @@ function CodeLens({
 }) {
   const rows = [
     {
+      line: "if !rpcsec_gss_reachable: return",
+      tone: state.doorOpen ? "neutral" : "safe",
+    },
+    {
       line: `box = stack_buffer(${BUFFER_BYTES})  // 4 blocks`,
-      tone: "neutral",
+      tone: state.doorOpen ? "neutral" : "muted",
     },
     {
       line: `incoming = request_part(${state.packetBytes})  // ${story.packetBlocks} blocks`,
-      tone: "neutral",
+      tone: state.doorOpen ? "neutral" : "muted",
     },
     {
       line: "if incoming > box.size: stop",
-      tone: state.patched ? "safe" : "missing",
+      tone: !state.doorOpen ? "muted" : state.patched ? "safe" : "missing",
     },
     {
       line: "copy(box, incoming)",
-      tone: story.overflowing ? "danger" : "safe",
+      tone: !state.doorOpen ? "muted" : story.overflowing ? "danger" : "safe",
     },
   ];
 
