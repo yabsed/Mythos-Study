@@ -503,7 +503,20 @@ h1 {
   color: var(--text);
 }
 
+.patch-reference {
+  margin-top: 14px;
+  padding: 18px 2px 8px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+}
+
 .advisory-header {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.patch-header {
   display: grid;
   gap: 5px;
   margin-bottom: 14px;
@@ -515,16 +528,19 @@ h1 {
   font-weight: 900;
 }
 
+.patch-reference h2,
 .advisory h2 {
   font-size: clamp(1.3rem, 2vw, 1.8rem);
   line-height: 1.2;
 }
 
+.patch-reference h3,
 .advisory h3 {
   font-size: 1rem;
   line-height: 1.35;
 }
 
+.patch-meta,
 .advisory-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -534,6 +550,7 @@ h1 {
   border-bottom: 1px solid var(--line);
 }
 
+.patch-meta div,
 .advisory-meta div {
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
@@ -547,12 +564,19 @@ h1 {
   border-top: 0;
 }
 
+.patch-meta div:first-child,
+.patch-meta div:nth-child(2) {
+  border-top: 0;
+}
+
+.patch-meta dt,
 .advisory-meta dt {
   color: var(--muted);
   font-size: 0.83rem;
   font-weight: 900;
 }
 
+.patch-meta dd,
 .advisory-meta dd {
   min-width: 0;
   margin: 0;
@@ -560,11 +584,18 @@ h1 {
   font-weight: 700;
 }
 
+.patch-meta code,
+.patch-section code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+}
+
 .advisory-intro {
   color: var(--muted);
   line-height: 1.55;
 }
 
+.patch-section,
 .advisory-section {
   display: grid;
   gap: 10px;
@@ -573,6 +604,7 @@ h1 {
   line-height: 1.58;
 }
 
+.patch-section h3,
 .advisory-section h3 {
   color: var(--text);
 }
@@ -629,6 +661,7 @@ h1 {
   margin-top: 8px;
 }
 
+.patch-reference pre,
 .advisory pre {
   max-width: 100%;
   margin: 10px 0 0;
@@ -638,6 +671,7 @@ h1 {
   background: var(--surface);
 }
 
+.patch-reference pre code,
 .advisory pre code {
   display: block;
   padding: 12px;
@@ -646,6 +680,14 @@ h1 {
   font-size: 0.82rem;
   line-height: 1.55;
   white-space: pre;
+}
+
+.code-block {
+  tab-size: 4;
+}
+
+.source-code code {
+  min-width: 760px;
 }
 
 .advisory-note {
@@ -748,10 +790,12 @@ h1 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .patch-meta,
   .advisory-meta {
     grid-template-columns: 1fr;
   }
 
+  .patch-meta div:nth-child(2),
   .advisory-meta div:nth-child(2) {
     border-top: 1px solid var(--line);
   }
@@ -829,6 +873,7 @@ h1 {
     height: 64px;
   }
 
+  .patch-meta div,
   .advisory-meta div {
     grid-template-columns: 1fr;
     gap: 4px;
