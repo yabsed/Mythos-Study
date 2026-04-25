@@ -72,6 +72,7 @@ a:hover {
 
 h1,
 h2,
+h3,
 p {
   margin: 0;
 }
@@ -495,6 +496,165 @@ h1 {
   font-size: 0.9rem;
 }
 
+.advisory {
+  margin-top: 14px;
+  padding: 18px 2px 8px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+}
+
+.advisory-header {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.advisory-kicker {
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.advisory h2 {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  line-height: 1.2;
+}
+
+.advisory h3 {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.advisory-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 20px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.advisory-meta div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.advisory-meta div:first-child,
+.advisory-meta div:nth-child(2) {
+  border-top: 0;
+}
+
+.advisory-meta dt {
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 900;
+}
+
+.advisory-meta dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.advisory-intro {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.advisory-section {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.advisory-section h3 {
+  color: var(--text);
+}
+
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.advisory-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.advisory-table th,
+.advisory-table td {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.advisory-table th {
+  background: var(--surface-muted);
+  color: var(--text);
+  font-weight: 900;
+}
+
+.advisory-table code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+}
+
+.advisory-steps {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.advisory-steps li {
+  padding-left: 4px;
+}
+
+.advisory-steps strong {
+  color: var(--text);
+}
+
+.advisory-steps p {
+  margin-top: 8px;
+}
+
+.advisory pre {
+  max-width: 100%;
+  margin: 10px 0 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.advisory pre code {
+  display: block;
+  padding: 12px;
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.advisory-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 @keyframes public-packet {
   0% {
     left: 13%;
@@ -587,6 +747,14 @@ h1 {
   .scene-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .advisory-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .advisory-meta div:nth-child(2) {
+    border-top: 1px solid var(--line);
+  }
 }
 
 @media (max-width: 640px) {
@@ -659,5 +827,10 @@ h1 {
     bottom: 218px;
     width: 64px;
     height: 64px;
+  }
+
+  .advisory-meta div {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
