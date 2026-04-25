@@ -239,14 +239,6 @@ function StoryTheater({
           <strong>보내는 쪽</strong>
         </div>
 
-        <div className={`gate ${state.doorOpen ? "is-open" : "is-closed"}`}>
-          <div className="gate-frame">
-            <div className="gate-leaf gate-left" />
-            <div className="gate-leaf gate-right" />
-            <div className="gate-bar" />
-          </div>
-        </div>
-
         <div className={`packet packet-${story.tone}`}>
           <div className="packet-fold" />
           <strong>{state.packetBytes}</strong>

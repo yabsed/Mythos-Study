@@ -297,88 +297,6 @@ h1 {
   animation: shield-pop 800ms ease both;
 }
 
-.gate {
-  position: absolute;
-  z-index: 5;
-  left: 34%;
-  top: 16%;
-  width: 112px;
-  height: 66px;
-  transform: translateX(-50%);
-}
-
-.gate-frame {
-  position: absolute;
-  inset: 0;
-  border: 3px solid rgba(11, 138, 124, 0.6);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 12px 20px rgba(29, 32, 40, 0.12);
-}
-
-.gate-leaf {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  border: 0;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.64), transparent 42%),
-    #ffffff;
-  transition: transform 220ms ease;
-}
-
-.gate-left {
-  left: 0;
-  border-right: 2px solid rgba(29, 32, 40, 0.22);
-  transform-origin: right center;
-}
-
-.gate-right {
-  right: 0;
-  border-left: 2px solid rgba(29, 32, 40, 0.22);
-  transform-origin: left center;
-}
-
-.gate.is-open .gate-left {
-  transform: perspective(120px) rotateY(68deg);
-}
-
-.gate.is-open .gate-right {
-  transform: perspective(120px) rotateY(-68deg);
-}
-
-.gate.is-closed .gate-leaf {
-  background:
-    repeating-linear-gradient(
-      -45deg,
-      rgba(214, 65, 45, 0.18) 0 8px,
-      rgba(255, 255, 255, 0.72) 8px 15px
-    ),
-    #fff0ec;
-}
-
-.gate-bar {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 50%;
-  height: 8px;
-  border-radius: 999px;
-  background: #d6412d;
-  opacity: 0;
-  transform: translateY(-50%);
-  box-shadow: 0 5px 10px rgba(214, 65, 45, 0.2);
-}
-
-.gate.is-closed .gate-bar {
-  opacity: 1;
-}
-
-.gate.is-closed .gate-frame {
-  border-color: rgba(214, 65, 45, 0.72);
-}
-
 .packet {
   position: absolute;
   z-index: 8;
@@ -723,12 +641,6 @@ h1 {
   .actor-box {
     width: 70px;
     height: 70px;
-  }
-
-  .gate {
-    left: 50%;
-    top: 62px;
-    transform: translateX(-50%) scale(0.82);
   }
 
   .packet {
