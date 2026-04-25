@@ -22,6 +22,8 @@ type LabState = {
 };
 
 const BUFFER_BYTES = 128;
+const BLOCK_BYTES = 32;
+const CAPACITY_BLOCKS = BUFFER_BYTES / BLOCK_BYTES;
 
 const initialState: LabState = {
   packetBytes: 320,
@@ -67,7 +69,7 @@ const scenes: Record<
     },
   },
   closed: {
-    label: "문 닫힘",
+    label: "접근 차단",
     icon: <LockKeyhole size={18} />,
     state: {
       packetBytes: 320,
@@ -79,6 +81,7 @@ const scenes: Record<
 
 function getStory(state: LabState) {
   const overflowBytes = Math.max(0, state.packetBytes - BUFFER_BYTES);
+  const packetBlocks = Math.ceil(state.packetBytes / BLOCK_BYTES);
   const boxReceivesData = state.doorOpen && !state.patched;
   const overflowing = boxReceivesData && overflowBytes > 0;
   const tone = !state.doorOpen
@@ -94,10 +97,12 @@ function getStory(state: LabState) {
     boxReceivesData,
     overflowing,
     tone,
+    packetBlocks,
+    overflowBlocks: boxReceivesData
+      ? Math.max(0, packetBlocks - CAPACITY_BLOCKS)
+      : 0,
     packetStop: !state.doorOpen ? "34%" : state.patched ? "62%" : "83%",
-    blockCount: !boxReceivesData
-      ? 0
-      : Math.min(16, Math.max(4, Math.round(state.packetBytes / 24))),
+    blockCount: boxReceivesData ? packetBlocks : 0,
   };
 }
 
@@ -146,13 +151,11 @@ function App() {
       <header className="hero">
         <div className="eyebrow">CVE-2026-4747</div>
         <h1>RPCSEC_GSS 오버플로우</h1>
-        <p>
-          FreeBSD의 RPCSEC_GSS 검증 루틴은 패킷 서명을 확인하면서 패킷 일부를
-          고정 크기 스택 버퍼로 복사합니다. 취약한 버전에서는 복사 전에 길이를
-          충분히 확인하지 않아, 큰 RPCSEC_GSS 데이터 패킷이 버퍼 밖으로 넘칠 수
-          있습니다.
-        </p>
       </header>
+
+      <section className="support-row">
+        <CodeLens state={state} story={story} />
+      </section>
 
       <StoryTheater
         sceneId={sceneId}
@@ -164,19 +167,7 @@ function App() {
         playAll={playAll}
       />
 
-      <section className="support-row">
-        <CodeLens state={state} story={story} />
-      </section>
-
-      <footer className="source-line">
-        출처:{" "}
-        <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-4747" target="_blank" rel="noreferrer">
-          NVD
-        </a>
-        <a href="https://www.freebsd.org/security/advisories/FreeBSD-SA-26:08.rpcsec_gss.asc" target="_blank" rel="noreferrer">
-          FreeBSD Advisory
-        </a>
-      </footer>
+      <Explanation />
     </main>
   );
 }
@@ -198,7 +189,6 @@ function StoryTheater({
   playScene: (nextScene: StoryId) => void;
   playAll: () => void;
 }) {
-  const capacityBlocks = 8;
   const visualStyle = {
     "--story-stop": story.packetStop,
   } as React.CSSProperties;
@@ -220,11 +210,22 @@ function StoryTheater({
           ))}
         </div>
         <div className="story-actions">
-          <button className="primary-button" type="button" onClick={playAll} disabled={playingAll}>
+          <button
+            className="primary-button"
+            type="button"
+            onClick={playAll}
+            disabled={playingAll}
+          >
             <Play size={16} />
             {playingAll ? "재생 중" : "전체 보기"}
           </button>
-          <button className="icon-button" type="button" onClick={() => playScene(sceneId)} aria-label="다시 보기" title="다시 보기">
+          <button
+            className="icon-button"
+            type="button"
+            onClick={() => playScene(sceneId)}
+            aria-label="다시 보기"
+            title="다시 보기"
+          >
             <RotateCcw size={17} />
           </button>
         </div>
@@ -233,16 +234,18 @@ function StoryTheater({
       <div className="story-stage" key={runId} style={visualStyle}>
         <div className="actor actor-left">
           <div className="actor-box">
-            <Network size={34} />
+            <Network size={30} />
           </div>
           <strong>보내는 쪽</strong>
         </div>
 
         <div className={`gate ${state.doorOpen ? "is-open" : "is-closed"}`}>
-          <div className="gate-post" />
-          <div className="gate-leaf gate-left" />
-          <div className="gate-leaf gate-right" />
-          <span>{state.doorOpen ? "열림" : "닫힘"}</span>
+          <div className="gate-frame">
+            <div className="gate-leaf gate-left" />
+            <div className="gate-leaf gate-right" />
+            <div className="gate-bar" />
+          </div>
+          <span>{state.doorOpen ? "통과 가능" : "차단"}</span>
         </div>
 
         <div className={`packet packet-${story.tone}`}>
@@ -252,8 +255,8 @@ function StoryTheater({
 
         <div className="actor actor-right">
           <div className="actor-box server-box">
-            <Server size={36} />
-            {state.patched ? <ShieldCheck className="shield" size={66} /> : null}
+            <Server size={32} />
+            {state.patched ? <ShieldCheck className="shield" size={54} /> : null}
           </div>
           <strong>받는 쪽</strong>
         </div>
@@ -262,24 +265,26 @@ function StoryTheater({
           <div className={`memory-box ${story.overflowing ? "is-overflowing" : ""}`}>
             <span className="box-label">스택 버퍼</span>
             <div className="empty-slots">
-              {Array.from({ length: capacityBlocks }, (_, index) => (
+              {Array.from({ length: CAPACITY_BLOCKS }, (_, index) => (
                 <i key={index} />
               ))}
             </div>
             {story.boxReceivesData ? (
               <div className="data-blocks">
-                {Array.from({ length: story.blockCount }, (_, index) => (
-                  <i
-                    className={index >= capacityBlocks ? "is-spill" : ""}
-                    style={{ animationDelay: `${1320 + index * 90}ms` }}
-                    key={index}
-                  />
-                ))}
+                {Array.from(
+                  { length: Math.min(story.blockCount, CAPACITY_BLOCKS) },
+                  (_, index) => (
+                    <i
+                      style={{ animationDelay: `${1320 + index * 90}ms` }}
+                      key={index}
+                    />
+                  ),
+                )}
               </div>
             ) : null}
             {state.patched ? (
               <div className="blocked-data">
-                {Array.from({ length: 8 }, (_, index) => (
+                {Array.from({ length: story.packetBlocks }, (_, index) => (
                   <i
                     style={{ animationDelay: `${1260 + index * 75}ms` }}
                     key={index}
@@ -290,18 +295,28 @@ function StoryTheater({
           </div>
           <div className="danger-zone">
             <span>옆 메모리</span>
+            {story.overflowBlocks > 0 ? (
+              <div className="overflow-data">
+                {Array.from({ length: story.overflowBlocks }, (_, index) => (
+                  <i
+                    style={{ animationDelay: `${1680 + index * 80}ms` }}
+                    key={index}
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
 
         <div className="result-badge">
           {!state.doorOpen ? (
-            <LockKeyhole size={44} />
+            <LockKeyhole size={34} />
           ) : state.patched ? (
-            <ShieldCheck size={48} />
+            <ShieldCheck size={38} />
           ) : story.overflowing ? (
-            <AlertTriangle size={48} />
+            <AlertTriangle size={38} />
           ) : (
-            <CheckCircle2 size={48} />
+            <CheckCircle2 size={38} />
           )}
         </div>
       </div>
@@ -318,11 +333,11 @@ function CodeLens({
 }) {
   const rows = [
     {
-      line: "box = stack_buffer(128)",
+      line: `box = stack_buffer(${BUFFER_BYTES})  // 4 blocks`,
       tone: "neutral",
     },
     {
-      line: `incoming = request_part(${state.packetBytes})`,
+      line: `incoming = request_part(${state.packetBytes})  // ${story.packetBlocks} blocks`,
       tone: "neutral",
     },
     {
@@ -348,6 +363,33 @@ function CodeLens({
             <code>{row.line}</code>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function Explanation() {
+  return (
+    <section className="explanation">
+      <p>
+        FreeBSD의 RPCSEC_GSS 검증 루틴은 패킷 서명을 확인하면서 패킷 일부를
+        고정 크기 스택 버퍼로 복사합니다. 취약한 버전에서는 복사 전에 길이를
+        충분히 확인하지 않아, 큰 RPCSEC_GSS 데이터 패킷이 버퍼 밖의 옆 메모리로
+        넘칠 수 있습니다.
+      </p>
+      <p>
+        그림에서 봉투는 하나의 논리적 RPCSEC_GSS 데이터 패킷, 스택 버퍼는
+        128바이트 상자, 블록 하나는 32바이트입니다. 그래서 320은 10개 블록이고,
+        상자 안에는 4개만 들어갑니다.
+      </p>
+      <div className="source-line">
+        출처:{" "}
+        <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-4747" target="_blank" rel="noreferrer">
+          NVD
+        </a>
+        <a href="https://www.freebsd.org/security/advisories/FreeBSD-SA-26:08.rpcsec_gss.asc" target="_blank" rel="noreferrer">
+          FreeBSD Advisory
+        </a>
       </div>
     </section>
   );
