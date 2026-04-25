@@ -258,17 +258,24 @@ function App() {
     <main className="app-shell">
       <AdvisoryTitle />
 
-      <section className="support-row">
-        <CodeLens state={state} story={story} />
-      </section>
+      <article className="interactive-section">
+        <header className="section-header">
+          <p className="advisory-kicker">interactive</p>
+          <h2>시뮬레이션</h2>
+        </header>
 
-      <StoryTheater
-        sceneId={sceneId}
-        runId={runId}
-        state={state}
-        story={story}
-        playScene={playScene}
-      />
+        <section className="support-row">
+          <CodeLens state={state} story={story} />
+        </section>
+
+        <StoryTheater
+          sceneId={sceneId}
+          runId={runId}
+          state={state}
+          story={story}
+          playScene={playScene}
+        />
+      </article>
 
       <PatchReference />
 
@@ -465,6 +472,11 @@ function PatchReference() {
       </header>
 
       <section className="patch-section">
+        <div className="source-line">
+          <a href="https://cgit.freebsd.org/src/commit/?id=1b00fdc1f3cd1311e4b52be253e0fecbca35941d" target="_blank" rel="noreferrer">
+            cgit 커밋 원문
+          </a>
+        </div>
         <pre className="code-block source-code function-diff">
           <code>
             {functionDiffLines.map((line, index) => (
@@ -528,6 +540,11 @@ function AdvisoryTitle() {
 function AdvisoryTranslation() {
   return (
     <article className="advisory">
+      <header className="advisory-header">
+        <p className="advisory-kicker">FreeBSD advisory</p>
+        <h2>권고문 번역</h2>
+      </header>
+
       <p className="advisory-intro">
         FreeBSD 보안 권고의 각 필드, 보안 브랜치, 아래 섹션에 대한 일반 정보는{" "}
         <a href="https://security.FreeBSD.org/" target="_blank" rel="noreferrer">

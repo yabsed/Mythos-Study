@@ -509,6 +509,13 @@ h1 {
   border-top: 0;
 }
 
+.interactive-section {
+  margin-top: 14px;
+  padding: 18px 2px 8px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+}
+
 .patch-reference {
   margin-top: 14px;
   padding: 18px 2px 8px;
@@ -528,6 +535,12 @@ h1 {
   margin-bottom: 14px;
 }
 
+.section-header {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
 .advisory-kicker {
   color: var(--danger);
   font-size: 0.8rem;
@@ -535,6 +548,7 @@ h1 {
 }
 
 .patch-reference h2,
+.interactive-section h2,
 .advisory h2 {
   font-size: clamp(1.3rem, 2vw, 1.8rem);
   line-height: 1.2;
