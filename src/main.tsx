@@ -2,12 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {
   AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Code2,
+  FileText,
   LockKeyhole,
   Network,
   Server,
   ShieldCheck,
+  Terminal,
 } from "lucide-react";
 import hljs from "highlight.js/lib/core";
 import javascript from "highlight.js/lib/languages/javascript";
@@ -16,6 +20,8 @@ import "./styles.css";
 hljs.registerLanguage("javascript", javascript);
 
 type StoryId = "small" | "overflow" | "patched" | "closed";
+type ArticleSlug = "advisory-translation" | "claude-freebsd-rce";
+type Route = "home" | ArticleSlug;
 
 type LabState = {
   packetBytes: number;
@@ -151,6 +157,29 @@ const correctionCommits = [
   },
 ];
 
+const articleLinks: Array<{
+  slug: ArticleSlug;
+  kicker: string;
+  title: string;
+  summary: string;
+  icon: React.ReactNode;
+}> = [
+  {
+    slug: "advisory-translation",
+    kicker: "FreeBSD advisory",
+    title: "권고문 번역",
+    summary: "FreeBSD-SA-26:08.rpcsec_gss 원문 권고문을 한국어로 옮긴 페이지입니다.",
+    icon: <FileText size={24} />,
+  },
+  {
+    slug: "claude-freebsd-rce",
+    kicker: "MAD Bugs",
+    title: "Claude가 FreeBSD 원격 커널 RCE와 루트 셸까지 완성했다",
+    summary: "MAD Bugs의 CVE-2026-4747 익스플로잇 분석 글을 한국어로 옮긴 페이지입니다.",
+    icon: <Terminal size={24} />,
+  },
+];
+
 type FunctionDiffLine = {
   text: string;
   tone?: "add" | "delete";
@@ -242,7 +271,105 @@ function getStory(state: LabState) {
   };
 }
 
+function isArticleSlug(value: string): value is ArticleSlug {
+  return articleLinks.some((article) => article.slug === value);
+}
+
+function getCurrentRoute(): Route {
+  if (typeof window === "undefined") {
+    return "home";
+  }
+
+  const hashRoute = window.location.hash.replace(/^#\/?/, "").replace(/\/$/, "");
+  if (isArticleSlug(hashRoute)) {
+    return hashRoute;
+  }
+
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  const pathRoute = pathParts[pathParts.length - 1] ?? "";
+  if (isArticleSlug(pathRoute)) {
+    return pathRoute;
+  }
+
+  return "home";
+}
+
+function getArticle(slug: ArticleSlug) {
+  return articleLinks.find((article) => article.slug === slug)!;
+}
+
+function getHomeHref() {
+  return import.meta.env.BASE_URL || "/";
+}
+
+function getArticleHref(slug: ArticleSlug) {
+  return `${getHomeHref()}#/${slug}`;
+}
+
+function handleBackNavigation(event: React.MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+
+  window.location.href = getHomeHref();
+}
+
+function useCurrentRoute() {
+  const [route, setRoute] = React.useState<Route>(() => getCurrentRoute());
+
+  React.useEffect(() => {
+    const updateRoute = () => setRoute(getCurrentRoute());
+
+    window.addEventListener("hashchange", updateRoute);
+    window.addEventListener("popstate", updateRoute);
+    updateRoute();
+
+    return () => {
+      window.removeEventListener("hashchange", updateRoute);
+      window.removeEventListener("popstate", updateRoute);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const article = route === "home" ? null : getArticle(route);
+    document.title = article
+      ? `${article.title} | CVE-2026-4747 Visual Lab`
+      : "CVE-2026-4747 Visual Lab";
+
+    if (article) {
+      window.scrollTo(0, 0);
+    }
+  }, [route]);
+
+  return route;
+}
+
 function App() {
+  const route = useCurrentRoute();
+
+  if (route === "advisory-translation") {
+    return (
+      <ArticlePage slug={route}>
+        <AdvisoryTranslation />
+      </ArticlePage>
+    );
+  }
+
+  if (route === "claude-freebsd-rce") {
+    return (
+      <ArticlePage slug={route}>
+        <MadBugsTranslation />
+      </ArticlePage>
+    );
+  }
+
+  return <HomePage />;
+}
+
+function HomePage() {
   const [state, setState] = React.useState<LabState>(initialState);
   const [sceneId, setSceneId] = React.useState<StoryId>("overflow");
   const [runId, setRunId] = React.useState(1);
@@ -279,10 +406,58 @@ function App() {
 
       <PatchReference />
 
-      <AdvisoryTranslation />
-
-      <MadBugsTranslation />
+      <ArticleIndex />
     </main>
+  );
+}
+
+function ArticlePage({
+  slug,
+  children,
+}: {
+  slug: ArticleSlug;
+  children: React.ReactNode;
+}) {
+  const article = getArticle(slug);
+
+  return (
+    <main className="app-shell detail-shell">
+      <nav className="detail-nav" aria-label="페이지 이동">
+        <a className="back-link" href={getHomeHref()} onClick={handleBackNavigation}>
+          <ArrowLeft size={18} />
+          <span>목록으로</span>
+        </a>
+      </nav>
+      <div className="detail-label">{article.kicker}</div>
+      {children}
+    </main>
+  );
+}
+
+function ArticleIndex() {
+  return (
+    <article className="article-index">
+      <header className="section-header">
+        <p className="advisory-kicker">detailed explanation</p>
+        <h2>자세한 설명</h2>
+      </header>
+
+      <ul className="article-link-list">
+        {articleLinks.map((article) => (
+          <li key={article.slug}>
+            <a href={getArticleHref(article.slug)}>
+              <span className="article-link-icon">{article.icon}</span>
+              <span className="article-link-copy">
+                <span className="article-link-kicker">{article.kicker}</span>
+                <strong>{article.title}</strong>
+                <span>{article.summary}</span>
+              </span>
+              <ArrowRight className="article-link-arrow" size={20} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 }
 
